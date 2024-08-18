@@ -27,17 +27,16 @@ function generateUniqueUsername() {
 
 // Register new user
 app.post('/register', (req, res) => {
-    const { username, password } = req.body;
+    const { username, password, name } = req.body;
     const query = 'INSERT INTO account (username, password) VALUES (?, ?)';
     db.query(query, [username, password], (err, result) => {
         if (err) return res.status(500).send(err);
 
         const accountId = result.insertId;
-        let uniqueUsername = generateUniqueUsername();
         const userQuery = 'INSERT INTO user (account_id, name) VALUES (?, ?)';
-        db.query(userQuery, [accountId, uniqueUsername], (err, result) => {
+        db.query(userQuery, [accountId, name], (err, result) => {
             if (err) return res.status(500).send(err);
-            res.status(200).send(`User registered with username: ${uniqueUsername}`);
+            res.status(200).send(`User registered with username: ${name}`);
         });
     });
 });
@@ -50,14 +49,11 @@ app.post('/login', (req, res) => {
         if (err) return res.status(500).json({ error: err.message });
         
         if (results.length > 0) {
-            // Generate a token or session identifier if necessary
-            const token = 'some_generated_token'; // Placeholder for actual token generation logic
-
-            // Return a JSON response with the login success message and token
+            const token = 'abcdefghiklmnoupw12345'; // Placeholder for actual token generation logic
             res.status(200).json({
                 message: 'Login successful',
                 token: token, // Include token if needed
-                username: results[0].username // Return the username for the client
+                username: results[0].username 
             });
         } else {
             res.status(401).json({ message: 'Invalid credentials' });
@@ -67,11 +63,10 @@ app.post('/login', (req, res) => {
 
 
 app.get('/getPosts', (req, res) => {
-  // Đảm bảo rằng bạn đang kết nối đúng cơ sở dữ liệu và trả về dữ liệu đúng cách
   const query = 'SELECT * FROM posts LIMIT 10';
   db.query(query, (err, results) => {
     if (err) return res.status(500).send(err);
-    res.json(results); // Trả về dữ liệu dưới dạng JSON
+    res.json(results);
   });
 });
 

@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './home.css';
 import { images } from '../../images/images'; // Import images
+
 
 function Home() {
   const [posts, setPosts] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0); // Current image index
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState('');
   const [currentPage, setCurrentPage] = useState(1); // Current page
-  const postsPerPage = 5; // Number of posts per page
+  const navigate = useNavigate();
+
+  const postsPerPage = 5; 
 
   useEffect(() => {
     document.title = 'Fashion Blog - Home';
@@ -22,6 +27,17 @@ function Home() {
       setIsLoggedIn(true);
     }
   };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    setIsLoggedIn(false);
+    setPopupMessage('You have been logged out!');
+        setShowPopup(true);
+        setTimeout(() => {
+          setShowPopup(false);
+          navigate('/');
+        }, 1000)
+  }
 
   const getPosts = () => {
     fetch('http://localhost:81/getPosts', {
@@ -78,16 +94,16 @@ function Home() {
                   </Link>
                   <ul className="dropdown-menu">
                     <li><Link to="/Profile">Profile</Link></li>
-                    <li><Link to="/Logout">Log out</Link></li>
+                    <li><Link onClick={handleLogout}>Log out</Link></li>
                   </ul>
                 </li>
               ) : (
                 <li><Link to="Login">Login</Link></li>
               )}
             </ul>
-          </div>
-          <div className='welcome'>
-            <h1>Fashion Blog</h1>
+            <div className='welcome'>
+              <h1>Fashion Blog</h1>
+            </div>
           </div>
         </div>
       </div>
@@ -95,8 +111,9 @@ function Home() {
         <div className='side-nav'>
           {currentPosts.map((post) => (
             <div key={post.id} className='side-nav-item'>
-              <h3>{post.title}</h3>
-              <p>{post.content}</p>
+              <h3 className='title'>{post.title}</h3>
+              <p className='description'>{post.description}</p>
+              <p className='author'>By {post.author}</p>
             </div>
           ))}
           <div className='pagination'>
@@ -130,6 +147,11 @@ function Home() {
         </div>
       </div>
       <div className='footer'>FOOTER HERE</div>
+      {showPopup && (
+        <div className="popup">
+          <p>{popupMessage}</p>
+        </div>
+      )}
     </div>
   );
 }

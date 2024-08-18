@@ -1,0 +1,121 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family:"poppins",sans-serif;
+}
+
+.body_login{
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: url("https://images.pexels.com/photos/322207/pexels-photo-322207.jpeg") no-repeat;
+    background-size: cover;
+    background-position: center;
+} 
+.wapper{
+    width: 26.25em; 
+    border: 2px solid rgba(233, 222, 222, 0.748);
+    background: rgba(127, 121, 121, 0.867);
+    backdrop-filter: opacity(20px);
+    color:#fff;
+    border-radius: 0.75em;
+    padding: 1.875em 2.5em;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+.wapper h1 {
+    margin-top: 1.8em;
+    font-size: 2em;
+    text-align: center;
+}
+.wapper .input-box{
+    width: 100%;
+    height: 3em;
+    margin: 1.5em 0; 
+}
+.input-box input{
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none; 
+    outline: none;
+    border: 2px solid rgba(255,255,255, .2);
+    border-radius: 2em;
+    font-size: 1em;
+    color: #fff;
+    padding-left: 2.6em;
+}
+.input-box input::placeholder{
+    position: relative;
+    color: #fff;
+}
+
+.input-box .i1,
+.input-box .i2{
+    position: relative;
+    top: 2.2em;
+    left: 0.8em;
+}
+.wapper .remember-forgot{
+    display: flex;
+    justify-content: space-between;
+    font-size: 1em;
+    margin: 2.2em 0 1em;
+}
+.remember-forgot label input{
+    accent-color: #fff;
+    margin: 3px;
+}
+.remember-forgot a{
+    color: #fff;
+    text-decoration: none;
+}
+.remember-forgot a:hover{
+    text-decoration:underline;
+}
+.wapper .bnt{
+    width: 100%;
+    height:2.8em ;
+    background-color: #fff;
+    border: none;
+    outline: none;
+    border-radius: 2.5em;
+    box-shadow: 0 0 10px rgba(0,0,0, .1);
+    cursor: pointer;
+    font-size: 1em;
+    color: #333;
+    font-weight: 600;
+}
+.wapper .register {
+    font-size: 0.9em;
+    text-align: center;
+    margin:1.75em 0 1.07em ;
+}
+.register p a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+}
+.register p a:hover{
+    text-decoration: underline;
+}
+
+.popup {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 1.5em;
+    border-radius: 0.5em;
+    z-index: 1000;
+    text-align: center;
+  }
+  
+  .popup p {
+    margin: 0;
+    font-size: 1.2em;
+  }
+  
