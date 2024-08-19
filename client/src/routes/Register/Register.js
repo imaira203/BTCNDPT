@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import "./register.css";
+import "./register.css"
 
 function Register() {
   useEffect(() => {
@@ -10,6 +10,8 @@ function Register() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhoneNumber] = useState('');
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
   const navigate = useNavigate();
@@ -17,10 +19,27 @@ function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
 
+    if (!/^\d{10}$/.test(phone)) {
+      setPopupMessage('Phone number must be 10 digits.');
+      setShowPopup(true);
+      setTimeout(() => setShowPopup(false), 3000);
+      return;
+    }
+  
+    // Kiểm tra email (định dạng example@gmail.com)
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setPopupMessage('Please enter a valid email address.');
+      setShowPopup(true);
+      setTimeout(() => setShowPopup(false), 3000);
+      return;
+    }
+
     const registerData = {
       username: username,
       password: password,
       name: name,
+      phone: phone,
+      email: email,
     };
 
     try {
@@ -38,7 +57,7 @@ function Register() {
         setTimeout(() => {
           setShowPopup(false);
           navigate('/login');
-        }, 2000); // Redirect to login page after 2 seconds
+        }, 2000);
       } else {
         setPopupMessage('Registration failed. Please try again.');
         setShowPopup(true);
@@ -54,7 +73,7 @@ function Register() {
 
   return (
     <div className='body_login'>
-      <div className="wrapper">
+      <div className="wrapper_register">
         <form onSubmit={handleRegister}>
           <h1>Create an account</h1>
           <div className="input-box">
@@ -66,6 +85,18 @@ function Register() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder='Name'
+              required
+            />
+          </div>
+          <div className="input-box">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="i2" viewBox="0 0 16 16">
+              <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2m3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2"/>
+            </svg>
+            <input
+              type="text"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder='Example@gmail.com'
               required
             />
           </div>
@@ -90,6 +121,18 @@ function Register() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder='Password'
+              required
+            />
+          </div>
+          <div className="input-box">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="i2" viewBox="0 0 16 16">
+              <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2m3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2"/>
+            </svg>
+            <input
+              type="text"
+              value={phone}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              placeholder='Phone Number'
               required
             />
           </div>
