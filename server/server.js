@@ -49,17 +49,32 @@ app.post('/login', (req, res) => {
         if (err) return res.status(500).json({ error: err.message });
         
         if (results.length > 0) {
-            const token = 'abcdefghiklmnoupw12345'; // Placeholder for actual token generation logic
+            const token = 'abcdefghiklmnoupw12345'; 
             res.status(200).json({
                 message: 'Login successful',
-                token: token, // Include token if needed
-                username: results[0].username 
+                token: token, 
+                username: results[0].username,
+                account_id: results[0].id
             });
         } else {
             res.status(401).json({ message: 'Invalid credentials' });
         }
     });
 });
+
+app.get('/getUser', (req, res) => {
+    const account_id = req.query.account_id;
+    const query = "SELECT name FROM user WHERE account_id = ?";
+    db.query(query, [account_id], (err, results) => {
+        if (err) return res.status(500).send(err);
+        if (results.length > 0) {
+            res.json(results);
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    });
+});
+
 
 
 app.get('/getPosts', (req, res) => {

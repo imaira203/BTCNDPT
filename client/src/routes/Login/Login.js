@@ -33,8 +33,9 @@ function Login() {
 
       if (response.ok) {
         const data = await response.json();
-        setIsLoggedIn(true);
         localStorage.setItem('token', data.token);
+        localStorage.setItem('accountId', data.account_id);
+        setIsLoggedIn(true);
         setPopupMessage('Login successful!');
         setShowPopup(true);
         setTimeout(() => {
@@ -88,7 +89,7 @@ function Login() {
           <div className="register">
             <p>Don't have an account? <Link to="/Register">Create one</Link></p>
           </div>
-        </form>
+        </form> 
       </div>
 
       {showPopup && (

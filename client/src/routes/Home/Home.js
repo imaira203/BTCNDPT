@@ -61,17 +61,14 @@ function Home() {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
   };
 
-  // Get current posts based on current page
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
 
-  // Handle page change
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
-  // Calculate total pages
   const totalPages = Math.ceil(posts.length / postsPerPage);
 
   return (
