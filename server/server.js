@@ -5,6 +5,8 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const { createClient } = require('@supabase/supabase-js');
 
+const port = 81;
+
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -160,7 +162,7 @@ app.get('/getPosts', async (req, res) => {
 // Static folder to serve uploaded images
 app.use('/uploads', express.static('uploads'));
 
-const port = 81;
+
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });

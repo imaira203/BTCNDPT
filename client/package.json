@@ -17,8 +17,11 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "start": "concurrently \"npm run start-client\" \"npm run start-server\"",
+    "ubuntu": "concurrently \"sudo npm run start-ubuntu-client\" \"sudo npm run start-ubuntu-server\"",
+    "start-ubuntu-client": "sudo cross-env PORT=80 react-scripts start",
     "start-client": "cross-env PORT=80 react-scripts start",
     "start-server": "node ../server/server.js",
+    "start-ubuntu-server": "sudo node ../server/server.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
