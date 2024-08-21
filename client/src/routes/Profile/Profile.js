@@ -4,7 +4,7 @@ import './profile.css';
 function Profile() {
   const [user, setUser] = useState({ name: '' });
   const [avatar, setAvatar] = useState('');
-  const [error, setError] = useState('');
+  const [err, setError] = useState('');
 
   useEffect(() => {
     document.title = 'Fashion Blog - Profile';
@@ -37,7 +37,8 @@ function Profile() {
           console.error('Upload failed');
         }
       } catch (error) {
-        console.error('Error uploading file:', error);
+        setError(error);
+        console.log('Error uploading file:', err);
       }
     }
   };
@@ -57,7 +58,7 @@ function Profile() {
     })
     .then(data => {
       if (data.length > 0) {
-        setUser(data[0]);
+        setUser(data[0].account);
         setAvatar(data[0].avatar || "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg");
       } else {
         setError('User not found.');
