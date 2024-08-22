@@ -13,14 +13,23 @@
     border-radius: 4px;
     padding: 15px;
     margin-bottom: 15px;
-    display: grid;
-    flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    padding-left: 3.8em;
+    padding-right: 7.6em;
   }
 
-  .cart-item .details{
-    width: ;
+  .cart-item .card-image{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border: 1px solid red;
+    width: 50%;
+    height: 100%;
   }
+
   
   .cart-item h3 {
     text-align: center;

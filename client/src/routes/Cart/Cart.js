@@ -125,9 +125,6 @@ function Cart() {
                     <p>Quantity: {quantity}</p>
                     <p>Total: ${total.toFixed(2)}</p>
                   </div>
-                  <div className='card-image'>
-                    <img alt='img' src={item.product.img}></img>
-                  </div>
                 </div>
               );
             })}
