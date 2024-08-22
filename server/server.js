@@ -48,7 +48,7 @@ const upload = multer({
 
 // Rate a product
 app.post('/rate-product', async (req, res) => {
-    const { productId, rating } = req.body;
+    const { productId, rating, user_id } = req.body;
 
     if (!productId || rating == null) {
         return res.status(400).json({ message: 'Product ID and rating are required' });
@@ -57,7 +57,7 @@ app.post('/rate-product', async (req, res) => {
     try {
         const { data, error } = await supabase
             .from('ratings')
-            .upsert({ product_id: productId, rating })
+            .upsert({ product_id: productId, rating, user_id })
             .select();
 
         if (error) {
@@ -155,54 +155,173 @@ app.post('/upload-avatar', (req, res) => {
 app.post('/register', async (req, res) => {
     const { username, password, name, email, phone } = req.body;
 
-    const { data: accountData, error: accountError } = await supabase
-        .from('account')
-        .insert([{ username, password, phone, email }])
-        .select();
+    try {
+        const { data: accountData, error: accountError } = await supabase
+            .from('account')
+            .insert([{ username, password, phone, email }])
+            .select();
 
-    if (accountError) {
-        return res.status(500).send(accountError.message);
+        if (accountError) {
+            throw new Error(`Account Error: ${accountError.message}`);
+        }
+
+        const accountId = accountData[0].id;
+
+        const { error: userError } = await supabase
+            .from('user')
+            .insert([{ account_id: accountId, name }]);
+
+        if (userError) {
+            throw new Error(`User Error: ${userError.message}`);
+        }
+
+        res.status(200).send(`User registered with username: ${name}`);
+    } catch (err) {
+        console.error('Registration Error:', err.message);
+        res.status(500).send(`Server Error: ${err.message}`);
     }
-
-    const accountId = accountData[0].id;
-
-    const { error: userError } = await supabase
-        .from('user')
-        .insert([{ account_id: accountId, name }]);
-
-    if (userError) {
-        return res.status(500).send(userError.message);
-    }
-
-    res.status(200).send(`User registered with username: ${name}`);
 });
 
-// User login
+
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
-    const { data: results, error } = await supabase
+    // Fetch account details
+    const { data: accountResults, error: accountError } = await supabase
         .from('account')
         .select('*')
         .eq('username', username)
-        .eq('password', password);
+        .eq('password', password)
+        .single(); // Fetch a single account
 
-    if (error) {
-        return res.status(500).json({ error: error.message });
+    if (accountError) {
+        return res.status(500).json({ error: accountError.message });
     }
 
-    if (results.length > 0) {
-        const token = 'abcdefghiklmnoupw12345';
+    if (accountResults) {
+        const { data: userResults, error: userError } = await supabase
+            .from('user')
+            .select('*')
+            .eq('account_id', accountResults.id);
+        if (userError) {
+            return res.status(500).json({ error: userError.message });
+        }
+
+        const token = 'abcdefghiklmnoupw12345'; // Generate a real token in production
         res.status(200).json({
             message: 'Login successful',
             token: token,
-            username: results[0].username,
-            account_id: results[0].id
+            username: accountResults.username,
+            account_id: accountResults.id,
+            user: userResults // Include user data
         });
     } else {
         res.status(401).json({ message: 'Invalid credentials' });
     }
 });
+
+app.post('/add-cart', async (req, res) => {
+    const { product_id, user_id } = req.body;
+
+    if (!user_id || !product_id) {
+        return res.status(400).json({ message: 'User ID and Product ID are required' });
+    }
+
+    try {
+        // Check if the item already exists in the cart
+        const { data: existingItem, error: fetchError } = await supabase
+            .from('cart')
+            .select('*')
+            .eq('user_id', user_id)
+            .eq('product_id', product_id)
+            .single();
+
+        if (fetchError && fetchError.code !== 'PGRST116') { // Handle errors other than 'No Rows Found'
+            throw new Error(fetchError.message);
+        }
+
+        if (existingItem) {
+            // If item exists, update the quantity
+            const newQuantity = existingItem.quantity + 1;
+            const { error: updateError } = await supabase
+                .from('cart')
+                .update({ quantity: newQuantity })
+                .eq('user_id', user_id)
+                .eq('product_id', product_id);
+
+            if (updateError) {
+                throw new Error(updateError.message);
+            }
+
+            res.json({ message: 'Cart item quantity updated successfully', data: { ...existingItem, quantity: newQuantity } });
+        } else {
+            // If item does not exist, insert a new row
+            const { error: insertError } = await supabase
+                .from('cart')
+                .insert([{ user_id, product_id, quantity: 1 }]);
+
+            if (insertError) {
+                throw new Error(insertError.message);
+            }
+
+            res.json({ message: 'Item added to cart successfully', data: { user_id, product_id, quantity: 1 } });
+        }
+    } catch (err) {
+        console.error('Error adding item to cart:', err.message);
+        res.status(500).json({ message: 'Failed to add item to cart', error: err.message });
+    }
+});
+
+
+// Get items in user's cart
+app.get('/get-cart', async (req, res) => {
+    const user_id = req.query.user_id;
+
+    if (!user_id) {
+        return res.status(400).json({ message: 'User ID is required' });
+    }
+
+    try {
+        // Fetch cart items for the user
+        const { data: cartItems, error } = await supabase
+            .from('cart')
+            .select('product_id, quantity')
+            .eq('user_id', user_id);
+
+        if (error) {
+            throw new Error(error.message);
+        }
+
+        if (!cartItems || cartItems.length === 0) {
+            return res.status(404).json({ message: 'No items found in cart' });
+        }
+
+        // Fetch product details for the products in the cart
+        const { data: products, error: productError } = await supabase
+            .from('products')
+            .select('id, name, firstPrice, lastPrice, image')
+            .in('id', cartItems.map(item => item.product_id));
+        
+        if (productError) {
+            throw new Error(productError.message);
+        }
+
+        // Combine cart items with product details
+        const cartWithProductDetails = cartItems.map(cartItem => {
+            const product = products.find(prod => prod.id === cartItem.product_id);
+            return {
+                ...cartItem,
+                product
+            };
+        });
+
+        res.json(cartWithProductDetails);
+    } catch (err) {
+        console.error('Error fetching cart items:', err.message);
+        res.status(500).json({ message: 'Failed to fetch cart items', error: err.message });
+    }
+});
+
 
 // Get user details
 app.get('/getUser', async (req, res) => {

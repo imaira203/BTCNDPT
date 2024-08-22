@@ -16,6 +16,7 @@ function Shop() {
     checkLoginStatus();
     fetchProducts('Men');
   }, []);
+  
 
   const checkLoginStatus = () => {
     const token = localStorage.getItem('token');
@@ -31,12 +32,51 @@ function Shop() {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
-      console.log('Products fetched:', data.products);
-      setProducts(data.products); // Update state with fetched products
+      const productsWithRatings = await Promise.all(
+        data.products.map(async (product) => {
+          const ratingResponse = await fetch(`http://localhost:81/get-rating?product_id=${product.id}`);
+          const ratingData = await ratingResponse.json();
+          return {
+            ...product,
+            rating: ratingData.averageRating || 0,
+          };
+        })
+      );
+      setProducts(productsWithRatings); // Cập nhật state với danh sách sản phẩm cùng với rating
     } catch (error) {
       console.error('Error fetching products:', error.message);
     }
   };
+
+  const handleAddCart = async (productId) => {
+    const user_id = localStorage.getItem('userId');
+    
+    if (!user_id) {
+        console.error('User ID is missing');
+        return;
+    }
+
+    try {
+        const response = await fetch('http://localhost:81/add-cart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ product_id: productId, user_id }), // Ensure keys match
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Network response was not ok');
+        }
+
+        const result = await response.json();
+        console.log('Product added to cart', result);
+    } catch (error) {
+        console.error('Failed to add: ', error.message);
+    }
+};
+
   
   const handleLogout = () => {
     localStorage.clear();
@@ -50,13 +90,14 @@ function Shop() {
   }
 
   const handleRateProduct = async (productId, rating) => {
+    const user_id = localStorage.getItem('userId');
     try {
         const response = await fetch('http://localhost:81/rate-product', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ productId, rating }),
+            body: JSON.stringify({ productId, rating, user_id }),
         });
 
         if (!response.ok) {
@@ -64,7 +105,6 @@ function Shop() {
         }
         const result = await response.json();
         console.log('Rating submitted:', result);
-        // Handle success response
     } catch (error) {
         console.error('Failed to submit rating:', error.message);
     }
@@ -72,8 +112,10 @@ function Shop() {
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
-    fetchProducts(category); // Pass the category parameter
+    setProducts([]); // Clear the existing products
+    fetchProducts(category); // Fetch products for the new category
   };
+
   
 
 
@@ -147,22 +189,26 @@ function Shop() {
         </div>
         <div className='products-list'>
           <div className='item'>
-            {products.map((product) => (
-              <div key={product.productId} className='item-sell'>
-                <div className='product-image'>AAAA</div>
-                <div className='product-details'>
-                  <div className='product-name'>{product.name}</div>
-                  <Rating 
-                    productId={product.id} 
-                    currentRating={product.rating} 
-                    onRate={(newRating) => handleRateProduct(product.id, newRating)}
-                  />
-                  <div className='first-price'>{product.firstPrice}</div>
-                  <div className='last-price'>{product.lastPrice}</div>
-                  <div className='vote'>VOTE</div>
+          {products.length > 0 ? (
+              products.map((product) => (
+                <div key={product.id} className='item-sell'>
+                  <div className='product-image'><img alt='product-image' src={product.image}></img></div>
+                  <div className='product-details'>
+                    <div className='product-name'>{product.name}</div>
+                    <Rating 
+                      productId={product.id} 
+                      currentRating={product.rating} 
+                      onRate={(newRating) => handleRateProduct(product.id, newRating)}
+                    />
+                    <div className='first-price'>${product.firstPrice}</div>
+                    <div className='last-price'>${product.lastPrice}</div>
+                    <button className='add-cart'  onClick={() => handleAddCart(product.id)}>Add to cart</button>
+                  </div>
                 </div>
-              </div>
-          ))}
+              ))
+            ) : (
+              <div className='not-found'>No products available</div>
+            )}
           </div>
         </div>
       </div>

@@ -33,8 +33,10 @@ function Login() {
 
       if (response.ok) {
         const data = await response.json();
+        console.log(data)
         localStorage.setItem('token', data.token);
         localStorage.setItem('accountId', data.account_id);
+        localStorage.setItem('userId', data.user[0].id);
         setIsLoggedIn(true);
         setPopupMessage('Login successful!');
         setShowPopup(true);

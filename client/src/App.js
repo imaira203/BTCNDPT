@@ -6,6 +6,8 @@ import Login from './routes/Login/Login';
 import Profile from './routes/Profile/Profile';
 import About from './routes/About/About';
 import Shop from './routes/Shop/Shop';
+import Cart from './routes/Cart/Cart';
+
 import './App.css';
 
 function App() {
@@ -18,6 +20,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/about-us" element={<About />} />
           <Route path="/shop" element={<Shop />} />
+          <Route path="/cart" element={<Cart />} />
         </Routes>
     </Router>
   );
