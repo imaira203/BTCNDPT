@@ -1,23 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './home.css';
-import { images } from '../../images/images'; // Import images
-
 
 function Home() {
-  const [posts, setPosts] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0); // Current image index
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
-  const [currentPage, setCurrentPage] = useState(1); // Current page
   const navigate = useNavigate();
-
-  const postsPerPage = 5; 
 
   useEffect(() => {
     document.title = 'Fashion Blog - Home';
-    getPosts();
     checkLoginStatus(); // Check if the user is logged in
   }, []);
 
@@ -27,6 +19,10 @@ function Home() {
       setIsLoggedIn(true);
     }
   };
+
+  const directToShop = () => {
+    navigate("/shop")
+  }
 
   const handleLogout = () => {
     localStorage.clear();
@@ -39,111 +35,61 @@ function Home() {
         }, 1000)
   }
 
-  const getPosts = () => {
-    fetch('http://localhost:81/getPosts', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setPosts(data);
-      })
-      .catch((error) => console.error('Error:', error));
-  };
-
-  const Prev = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
-  };
-
-  const Next = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-  };
-
-  const indexOfLastPost = currentPage * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
-
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  const totalPages = Math.ceil(posts.length / postsPerPage);
-
   return (
-    <div>
+    <div className="body">
       <div className='nav-container'>
         <div className='home-menu'>
           <div className='nav-menu'>
             <ul>
               <li><Link to="/">Home</Link></li>
-              <li><Link to="products">Products</Link></li>
-              <li><Link to="albums">Albums</Link></li>
+              <li><Link to="shop">Products</Link></li>
               <li><Link to="about-us">About Us</Link></li>
-              {isLoggedIn ? (
-                <li className="profile-menu">
-                  <Link to="/profile">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="40%" height="40%" fill="currentColor" className="bi bi-person-circle svg-icon" viewBox="0 0 16 16">
-                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
-                      <path fillRule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
-                    </svg>
-                  </Link>
-                  <ul className="dropdown-menu">
-                    <li><Link to="/profile">Profile</Link></li>
-                    <li><Link onClick={handleLogout}>Log out</Link></li>
-                  </ul>
-                </li>
-              ) : (
-                <li><Link to="Login">Login</Link></li>
-              )}
             </ul>
-            <div className='welcome'>
-              <h1>Fashion Blog</h1>
-            </div>
+            {isLoggedIn ? (
+                <div className="profile-menu">
+                  <ul>
+                    <li>
+                      <Link to="/profile">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40%" height="40%" fill="currentColor" className="bi bi-person-circle svg-icon" viewBox="0 0 16 16">
+                          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                          <path fillRule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                        </svg>
+                      </Link>
+                        <ul className="dropdown-menu">
+                          <li><Link to="/profile">Profile</Link></li>
+                          <li><Link onClick={handleLogout}>Log out</Link></li>
+                        </ul>
+                      </li>
+                      <li>
+                        <Link to={"/cart"}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40%" height="40%" fill="currentColor" className="bi bi-cart svg-icon" viewBox="0 0 16 16">
+                          <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                        </svg>
+                        </Link>
+                      </li>
+                  </ul>
+                  </div>
+              ) : (
+                  <div className="profile-menu">
+                    <ul>
+                      <li><Link to="Login">Login/Register</Link></li>
+                    </ul>
+                  </div>
+              )}
           </div>
         </div>
       </div>
       <div className='container'>
-        <div className='side-nav'>
-          {currentPosts.map((post) => (
-            <div key={post.id} className='side-nav-item'>
-              <h3 className='title'>{post.title}</h3>
-              <p className='description'>{post.description}</p>
-              <p className='author'>By {post.author}</p>
-            </div>
-          ))}
-          <div className='pagination'>
-            {Array.from({ length: totalPages }, (_, index) => (
-              <button
-                key={index + 1}
-                className={`page-button ${currentPage === index + 1 ? 'active' : ''}`}
-                onClick={() => handlePageChange(index + 1)}
-              >
-                {index + 1}
-              </button>
-            ))}
-          </div>
+        <div className="img" onClick={directToShop}>
+          <img alt="Men" src="https://templates.simplified.co/thumb/1f4ddfc2-fd55-43f9-8c8a-3be7277d5828.jpg"></img>
         </div>
-        <div className='main-page'>
-          <div className='image-container'>
-            {images.length > 0 && (
-              <img src={images[currentIndex]} alt="Banner" className='banner-image' />
-            )}
-          </div>
-          <div className='prev-btn' onClick={Prev}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M15 6L9 12L15 18" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-          <div className='next-btn' onClick={Next}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9 6L15 12L9 18" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
+        <div className="img" onClick={directToShop}>
+          <img alt="Women" src="https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/33234650700333.58d88a71f123e.png"></img>
+        </div>
+        <div className="img" onClick={directToShop}>
+         <img alt="Kids" src="https://i.ytimg.com/vi/5zWZjeeOViM/maxresdefault.jpg"></img>
         </div>
       </div>
-      <div className='footer'>FOOTER HERE</div>
       {showPopup && (
         <div className="popup">
           <p>{popupMessage}</p>

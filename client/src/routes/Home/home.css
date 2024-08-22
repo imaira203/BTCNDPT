@@ -4,10 +4,15 @@
 }
 
 
-body {
+.body {
     width: 100%;
     height: 100%;
     overflow: hidden;
+    background-color: #def1f7e5;
+}
+
+body::-webkit-scrollbar {
+    display: none;
 }
 
 .nav-container {
@@ -18,8 +23,6 @@ body {
 }
 
 .home-menu {
-    border: 1px solid rgba(71, 57, 91, 0.805);
-    background-color: rgba(152, 149, 160, 0.414);
     width: 100%;
     max-height: 100%;
     display: flex;
@@ -31,21 +34,25 @@ body {
     display: flex;
     width: 100%;
     min-height: 10vh;
+    padding-left: 3vw;
+    padding-right: 3vw;
     float: left;
-    margin-right: 18vw;
-    margin-left: 5vw;
+    justify-content: space-between; 
 }
 
+.home-menu .nav-menu .profile-menu ul,
 .home-menu .nav-menu ul {
     display: flex;
     flex-direction: row;
     list-style: none;
     align-items: center;
     text-decoration: none;
+    margin-right: auto;
 }
 
+.home-menu .nav-menu .profile-menu ul li,
 .home-menu .nav-menu ul li {
-    position: relative; /* Cần thiết để menu con có thể xuất hiện chính xác */
+    position: relative; 
     display: flex;
     height: 100%;
     width: 8em;
@@ -53,6 +60,7 @@ body {
     justify-content: center;
 }
 
+.home-menu .nav-menu .profile-menu ul li a,
 .home-menu .nav-menu ul li a {
     display: flex;
     align-items: center;
@@ -62,10 +70,10 @@ body {
     color: black;
     text-decoration: none;
     font-family: Open Sans, sans-serif;
-    text-transform: uppercase;
-    font-weight: bold;
+    font-weight: bolder;
 }
 
+.home-menu .nav-menu .profile-menu ul li:hover a,
 .home-menu .nav-menu ul li:hover a {
     color: rgb(45, 40, 40);
     font-size: large;
@@ -73,40 +81,55 @@ body {
     transition: font-size 0.3s ease, font-weight 0.3s ease; 
 }
 
+.home-menu .nav-menu .profile-menu ul li:hover .svg-icon,
 .home-menu .nav-menu ul li:hover .svg-icon {
     width: 50%;
     height: 50%;
     transition: width 0.3s ease, height 0.3s ease;
 }
 
-.home-menu .nav-menu ul li:hover {
-    background-color: rgba(94, 101, 109, 0.381);
+.home-menu .nav-menu .profile-menu {
+    display: flex;
+    margin-left: auto;
 }
 
-/* Menu con */
-.home-menu .nav-menu ul li .dropdown-menu {
-    display: none; /* Ẩn menu con mặc định */
+.home-menu .nav-menu .profile-menu a {
+    text-decoration: none;
+    color: black;
+    font-weight: bolder;
+    position: relative; 
+    display: flex;
+    float: right;
+    height: 100%;
+    width: 8em;
+    align-items: center;
+    justify-content: center;
+}
+
+.home-menu .nav-menu .profile-menu ul li .dropdown-menu {
+    display: none;
     position: absolute;
     top: 100%;
     left: 0;
     background-color: #fff;
     border: 1px solid #ddd;
     box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+    font-weight: bolder;
     list-style: none;
     padding: 0;
     margin: 0;
     z-index: 1000;
 }
 
-.home-menu .nav-menu ul li:hover .dropdown-menu {
+.home-menu .nav-menu .profile-menu ul li:hover .dropdown-menu {
     display: block;
 }
 
-.home-menu .nav-menu ul li .dropdown-menu li {
+.home-menu .nav-menu .profile-menu .dropdown-menu li {
     padding: 10px;
 }
 
-.home-menu .nav-menu ul li .dropdown-menu li a {
+.home-menu .nav-menu .profile-menu .dropdown-menu li a {
     text-decoration: none;
     color: #333;
     display: block;
@@ -120,54 +143,34 @@ body {
 
 .container {
     width: 100vw;
-    height: 75vh;
-    display: flex;
-    flex-direction: row;
-    overflow: hidden;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 0.6em;
 }
 
-.container .side-nav {
-    border: 1px solid black;
-    width: 60vw;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden; /* Hide scrollbar */
-    position: relative; /* Position for pagination */
-}
-
-.container .side-nav-item {
-    border: 1px solid rgb(29, 179, 92);
-    width: 100%;
-    height: 18%; 
-    box-sizing: border-box; /* Ensure padding/border are included in height */
-    padding: 10px; /* Add padding for better appearance */
-}
-.container .main-page {
-    border: 1px solid blue;
-    width: 40vw; /* Đảm bảo chiều rộng của phần này không quá lớn */
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center; /* Căn giữa hình ảnh */
-    position: relative; /* Để căn chỉnh các nút điều hướng */
-}
-
-.container .image-container {
-    width: 100%;
-    height: 100%;
+.container .img {
+    border: 1px solid rgba(206, 206, 230, 0.532);
+    margin: 0.6em;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden; /* Ensure that the image does not overflow */
+    overflow: hidden;
+    aspect-ratio: 9/11;
+    cursor: pointer;
+    background-color: rgba(140, 101, 101, 0.619);
+    border-radius: 30px;
 }
 
-.container .image-container .banner-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center; /* Center the image */
+.container .img img {
+    max-width: 100%; 
+    max-height: 100%;
+    object-fit: cover; 
+    object-position: center; 
+    border: 2px solid white;
 }
+
+
 
 .container .main-page .prev-btn,
 .container .main-page .next-btn {
@@ -230,11 +233,6 @@ body {
     background-color: #f0f0f0;
 }
 
-.footer {
-    border: 1px solid red;
-    height: 100vh;
-    width: 100%;
-}
 
 .popup {
     position: fixed;
